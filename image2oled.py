@@ -7,13 +7,18 @@ image = cv.imread('images/heart.png')
 # Check if the image was loaded successfully
 if image is not None:
     # Optional: Resize the image to the desired dimensions
-    resize_width = 64  # Adjust this value as needed
-    resize_height = 64  # Adjust this value as needed
+    resize_width = 32  # Adjust this value as needed
+    resize_height = 32  # Adjust this value as needed
     image = cv.resize(image, (resize_width, resize_height))
 
     # Convert RGBA image to grayscale
     bw_image = cv.cvtColor(image, cv.COLOR_RGBA2GRAY)
 
+    # Check if the image should be inverted
+    invert_image = True  # Set to True to invert the image
+    if invert_image:
+        bw_image = cv.bitwise_not(bw_image)  # Invert the image
+        
     # Threshold the grayscale image to create a binary image
     thresh_value = 128
     _, thresh_image = cv.threshold(bw_image, thresh_value, 255, cv.THRESH_BINARY)
@@ -29,7 +34,7 @@ if image is not None:
     file_path = 'output.txt'
     with open(file_path, 'w') as file:
         # Write data to the file in a format suitable for embedded systems
-        file.write('const unsigned char bitmap[] = {\n')  # Assuming 8 bits (1 byte) per row
+        file.write('const unsigned char frames[] = {\n')  # Assuming 8 bits (1 byte) per row
         for i in range(height):  # Loop over rows (height)
             file.write('    0b')  # Add '0b' before the first binary digit
             for j in range(width):  # Loop over columns (width)
