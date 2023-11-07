@@ -1,7 +1,10 @@
 import cv2 as cv
 
+max_width = 128
+max_height = 64
+buffer = max_width * max_height
 # Input video file
-video_file = 'output/circles_r.mp4'
+video_file = 'videos/kite.mp4'
 
 # Open the video file
 cap = cv.VideoCapture(video_file)
@@ -12,21 +15,7 @@ if not cap.isOpened():
     exit()
 
 # Output file for generated code
-output_file = 'output/vid.txt'
-
-max_width = 128
-max_height = 64
-
-# Get the width and height of the video
-width = int(cap.get(3))  # Width
-height = int(cap.get(4))  # Height
-
-if  width > max_width:
-    width = max_width 
-if  height > max_height:
-    height = max_height 
-    
-buffer = width*height
+output_file = 'output/kite.txt'
 
 # Initialize variables to store the generated code
 code = ''
@@ -42,28 +31,38 @@ while True:
     gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     # Threshold the frame
-    thresh_value = 86
+    thresh_value = 128
     _, thresh_frame = cv.threshold(gray_frame, thresh_value, 255, cv.THRESH_BINARY)
 
+    # Get the size (width and height) of the frame
+    height, width = thresh_frame.shape
+    if width > max_width:
+        width = max_width
+    if height > max_height:
+        height = max_height
     # Generate code for the current frame
     frame_code = '\n{\n'
-    for i in range(height):
-        for j in range(width):
-            pixel_value = int(thresh_frame[i, j])
-            frame_code += '\t' + str(pixel_value)
-            if j != width - 1:
-                frame_code += ','
-            # else:
-            #     frame_code += '}'
+    for i in range(height):  # Loop over rows (height)
+        frame_code += '    0b'  # Add '0b' before the first binary digit
+        for j in range(width):  # Loop over columns (width)
+            pixel_value = int(thresh_frame[i, j])  # Get the pixel value as an integer
+            if pixel_value > thresh_value:
+                frame_code += '1'  # Write '1' for white (above threshold)
+            elif pixel_value < thresh_value:
+                frame_code += '0'  # Write '0' for black (below threshold)
+
+            if (j + 1) % 8 == 0 and j != width - 1:
+                frame_code += ', 0b'  # Add a comma and '0b' for the next byte
+
         if i != height - 1:
-            frame_code += ',\n'
+            frame_code += ',\n'  # Add a comma and newline for the next row
         else:
-            frame_code += '\n},\n'
+            frame_code += '\n},\n'  # Close the array declaration
 
     code += frame_code
 
     frame_count += 1
-    
+
 code += '};'
 # Write the generated code to the output file
 with open(output_file, 'w') as file:

@@ -2,7 +2,7 @@
 import cv2 as cv
 
 # Load the image from the file 'heart.png'
-image = cv.imread('images/heart.png')
+image = cv.imread('images/kite.jpg')
 
 # Check if the image was loaded successfully
 if image is not None:
@@ -15,7 +15,7 @@ if image is not None:
     bw_image = cv.cvtColor(image, cv.COLOR_RGBA2GRAY)
 
     # Check if the image should be inverted
-    invert_image = True  # Set to True to invert the image
+    invert_image = False  # Set to True to invert the image
     if invert_image:
         bw_image = cv.bitwise_not(bw_image)  # Invert the image
         
@@ -34,7 +34,7 @@ if image is not None:
     file_path = 'output.txt'
     with open(file_path, 'w') as file:
         # Write data to the file in a format suitable for embedded systems
-        file.write('const unsigned char frames[] = {\n')  # Assuming 8 bits (1 byte) per row
+        file.write('const unsigned char bitmap[] = {\n')  # Assuming 8 bits (1 byte) per row
         for i in range(height):  # Loop over rows (height)
             file.write('    0b')  # Add '0b' before the first binary digit
             for j in range(width):  # Loop over columns (width)

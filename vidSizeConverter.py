@@ -1,13 +1,13 @@
 import cv2
 
 # Input video file
-video_file = 'videos/circles.mp4'  # Replace with your video file path
+video_file = 'videos/pen.mp4'  # Replace with your video file path
 
 # Output video file
-output_video_file = 'output/circles_r.mp4'
+output_video_file = 'videos/pen_r.mp4'
 
 # Specify the new dimensions for resizing
-new_width = 64 
+new_width = 128 
 new_height = 64  
 
 # Open the video file
